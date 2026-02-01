@@ -6,11 +6,21 @@ set -e
 
 PROJECT_NAME="${1:-my-site}"
 
+# Check Node version
+NODE_VERSION=$(node -v 2>/dev/null | cut -d'v' -f2 | cut -d'.' -f1)
+if [ -z "$NODE_VERSION" ] || [ "$NODE_VERSION" -lt 18 ]; then
+  echo "❌ Error: Node.js 18+ is required. Current: $(node -v 2>/dev/null || echo 'not installed')"
+  exit 1
+fi
+
 echo "🚀 Creating Vite project: $PROJECT_NAME"
 
 # Create Vite project
 npm create vite@latest "$PROJECT_NAME" -- --template react-ts
 cd "$PROJECT_NAME"
+
+# Create .nvmrc for Node version
+echo "18" > .nvmrc
 
 echo "📦 Installing dependencies..."
 
@@ -18,36 +28,13 @@ echo "📦 Installing dependencies..."
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 
-# Install shadcn/ui dependencies
+# Install animation library
+npm install framer-motion
+
+# Install shadcn/ui base dependencies
 npm install tailwindcss-animate class-variance-authority clsx tailwind-merge
 npm install lucide-react
-npm install @radix-ui/react-accordion \
-  @radix-ui/react-alert-dialog \
-  @radix-ui/react-aspect-ratio \
-  @radix-ui/react-avatar \
-  @radix-ui/react-checkbox \
-  @radix-ui/react-collapsible \
-  @radix-ui/react-context-menu \
-  @radix-ui/react-dialog \
-  @radix-ui/react-dropdown-menu \
-  @radix-ui/react-hover-card \
-  @radix-ui/react-label \
-  @radix-ui/react-menubar \
-  @radix-ui/react-navigation-menu \
-  @radix-ui/react-popover \
-  @radix-ui/react-progress \
-  @radix-ui/react-radio-group \
-  @radix-ui/react-scroll-area \
-  @radix-ui/react-select \
-  @radix-ui/react-separator \
-  @radix-ui/react-slider \
-  @radix-ui/react-slot \
-  @radix-ui/react-switch \
-  @radix-ui/react-tabs \
-  @radix-ui/react-toast \
-  @radix-ui/react-toggle \
-  @radix-ui/react-toggle-group \
-  @radix-ui/react-tooltip
+npm install @radix-ui/react-slot
 
 echo "⚙️ Configuring Tailwind..."
 
@@ -315,12 +302,53 @@ cat > tsconfig.json << 'EOF'
 }
 EOF
 
+# Create components.json for shadcn CLI
+cat > components.json << 'EOF'
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/index.css",
+    "baseColor": "slate",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  }
+}
+EOF
+
+echo ""
+echo "📦 Installing shadcn/ui components..."
+
+# Install all common components via shadcn CLI
+npx shadcn@latest add button badge card accordion dialog navigation-menu tabs sheet separator avatar alert -y
+
 echo ""
 echo "✅ Project created successfully!"
+echo ""
+echo "Installed:"
+echo "  ✓ React 18 + TypeScript + Vite"
+echo "  ✓ Tailwind CSS with shadcn/ui theming"
+echo "  ✓ Framer Motion for animations"
+echo "  ✓ 10 shadcn/ui components (add more with: npx shadcn@latest add [component])"
+echo "  ✓ Path aliases (@/) configured"
 echo ""
 echo "Next steps:"
 echo "  cd $PROJECT_NAME"
 echo "  npm run dev"
+echo ""
+echo "Add more components:"
+echo "  npx shadcn@latest add [component-name]"
+echo "  npx shadcn@latest add --all  # Install all components"
 echo ""
 echo "Build for production:"
 echo "  npm run build"

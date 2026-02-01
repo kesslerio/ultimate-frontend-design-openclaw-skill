@@ -13,7 +13,7 @@ metadata:
 
 Create distinctive, production-grade static sites from text requirements alone. No mockups, no Figma — just describe what you want and get bold, memorable designs.
 
-**Stack**: React 18 + TypeScript + Tailwind CSS + shadcn/ui  
+**Stack**: React 18 + TypeScript + Tailwind CSS + shadcn/ui + Framer Motion  
 **Output**: Vite (static HTML) or Next.js (Vercel-ready)
 
 ## Quick Start
@@ -105,8 +105,8 @@ What's the ONE thing someone will remember? A hero animation? Typography treatme
 - Smooth page transitions
 
 **Implementation**:
-- CSS-only for HTML artifacts
-- Framer Motion for React when complex orchestration needed
+- CSS-only for simple animations
+- Framer Motion for React (pre-installed via init scripts)
 - Keep durations 200-400ms (snappy, not sluggish)
 
 ### Spatial Composition
