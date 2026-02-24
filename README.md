@@ -15,6 +15,7 @@ An OpenClaw/Claude Code skill that generates bold, memorable web designs from pl
 - ⚡ **Two workflows** — Vite (pure static) or Next.js (Vercel deploy)
 - 🧩 **shadcn/ui components** — 10 common components pre-installed, add more with CLI
 - 📦 **Single-file bundling** — Bundle entire sites to one HTML file
+- 🔗 **Composable guardrails** — Pair with `design-taste-frontend` for stricter anti-slop enforcement while this skill stays the workflow/generator layer
 
 ## Quick Start
 
